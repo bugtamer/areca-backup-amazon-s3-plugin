@@ -11,10 +11,12 @@ import com.newsarea.areca.plugin.as3.gui.AS3StorageSelectionHelper;
 public class AS3StoragePlugin extends AbstractStoragePlugin implements StoragePlugin {
 
 	public static final String PLG_DISPLAY = "AS3";
+	public static final String PLG_ID = "areca-plugin-as3";
     public static final String PLG_NAME = "Amazon S3";
 	
 	public AS3StoragePlugin() {
 		super();
+		this.setId(PLG_ID);
 	}
 	
 	public String getFullName() {
@@ -30,7 +32,7 @@ public class AS3StoragePlugin extends AbstractStoragePlugin implements StoragePl
 	}
 	
 	public boolean storageSelectionHelperProvided() {
-        return false;
+        return true;
     }
 
 	public StorageSelectionHelper getStorageSelectionHelper() {

@@ -32,12 +32,12 @@ public class AS3FileSystemPolicyXMLHandler extends AbstractFileSystemPolicyXMLHa
 		if(secretNode == null) { throw new AdapterException("as3secret"); }
 		if(prefixNode == null) { throw new AdapterException("prefix"); }
 		if(bucketNode == null) { throw new AdapterException("bucket"); }
-		//
-		policy.setArchiveName(nameNode.getNodeValue());
+		//		
 		policy.setKey(keyNode.getNodeValue());
 		policy.setSecret(secretNode.getNodeValue());
 		policy.setPrefix(prefixNode.getNodeValue());
 		policy.setBucket(bucketNode.getNodeValue());
+		policy.setArchiveName(nameNode.getNodeValue());
 		//
 		return policy;
 	}

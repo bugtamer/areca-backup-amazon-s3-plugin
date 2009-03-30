@@ -308,7 +308,10 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
 //		}
     	//
 		try {
-			S3Object[] s3Objs = this.getS3Service().listObjects(this.getBucket(), this._prefix, null);
+			S3Bucket bucket = this.getBucket();
+			if(bucket == null) { return; }
+			//
+			S3Object[] s3Objs = this.getS3Service().listObjects(bucket, this._prefix, null);
 			for(S3Object obj : s3Objs) {				
 				boolean isDirectory = obj.getKey().lastIndexOf("/") == (obj.getKey().length() - 1);
 				AS3File file = new AS3File(
