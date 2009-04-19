@@ -151,4 +151,12 @@ public class AS3FileSystemPolicy extends AbstractFileSystemPolicy implements Fil
 		return policy;
 	}
 
+	public int getMaxRetries() {
+		return 3;
+	}
+
+	public boolean retrySupported() {
+		return true;
+	}
+
 }
