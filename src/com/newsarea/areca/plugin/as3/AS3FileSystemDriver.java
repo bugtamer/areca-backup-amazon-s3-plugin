@@ -117,70 +117,59 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
     
     public String[] list(File file, FilenameFilter filter) {
         File[] files = this.listFiles(file, filter);
-        if(files == null) { return null; }
-        //
         String[] ret = new String[files.length];
-        for (int i=0; i < files.length; i++) {        	
-            ret[i] = files[i].getName();
+
+        for (int i=0; i<files.length; i++) {
+            ret[i] = normalizeIfNeeded(files[i].getAbsolutePath());
         }
-        //
+
         return ret;
     }
 
     public String[] list(File file) {
         File[] files = this.listFiles(file);
-        if(files == null) { return null; }
-        //
         String[] ret = new String[files.length];
-        for (int i=0; i < files.length; i++) {        	
-            ret[i] = normalizeIfNeeded(files[i].getName());
+
+        for (int i=0; i<files.length; i++) {
+            ret[i] = normalizeIfNeeded(files[i].getAbsolutePath());
         }
-        //
+
         return ret;
     }      
 
     public File[] listFiles(File file, FileFilter filter) {
         File[] unfiltered = this.listFiles(file);
-        if(unfiltered == null) { return null; }
-        //
         ArrayList<File> retList = new ArrayList<File>();
         for (int i = 0; i < unfiltered.length; i++) {
             if (filter.accept(unfiltered[i])) {
                 retList.add(unfiltered[i]);
             }
         }
-        //
+
         return (File[])retList.toArray(new File[0]);
     }
 
     public File[] listFiles(File file, FilenameFilter filter) {
         File[] unfiltered = this.listFiles(file);
-        if(unfiltered == null) { return null; }
-        //
         ArrayList<File> retList = new ArrayList<File>();
         for (int i = 0; i < unfiltered.length; i++) {
             if (filter.accept(unfiltered[i].getParentFile(), unfiltered[i].getName())) {
                 retList.add(unfiltered[i]);
             }
         }
-        //
+
         return (File[])retList.toArray(new File[0]);
     }
 
     public File[] listFiles(File file) {
     	try {
 			this.mount();
-		} catch (Exception ex) {
-			Logger.defaultLogger().error(ex);
-		}
-    	//
+		} catch (IOException e1) { }
+		//
+    	//Logger.defaultLogger().info("listFiles - " + file.getAbsolutePath());
     	ArrayList<File> result = new ArrayList<File>();
-    	try { 
-    		String path = this.getAS3Key(file, true);
-    		if(!this._cachedFiles.containsKey(path)) {
-    			return null;
-    		}
-    		//
+        try {        	
+        	String path = this.getAS3Key(file, true);
         	for(AS3File as3file : this._cachedFiles.values()) {
         		String cname = as3file.getAS3Key();
         		// remove path
@@ -190,6 +179,8 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
         		//
         		int slashIdx = name.indexOf("/");        		
         		if(slashIdx > -1 && slashIdx != name.length() - 1) { continue; }
+        		//
+        		Logger.defaultLogger().info(name);
         		//
         		result.add(as3file);
         	}
@@ -226,23 +217,16 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
     }
 
     public boolean exists(File file) {
+    	//Logger.defaultLogger().info("exists - " + file.getAbsolutePath() + " - " + this.getAS3File(file).exists());
     	return this.getAS3File(file).exists();
     }
     
-    public boolean delete(File infile) {
-    	AS3File file = this.getAS3File(infile);
+    public boolean delete(File file) {
+    	Logger.defaultLogger().info("delete " + file.getAbsolutePath());
     	//
-    	if(file.isDirectory()) {
-    		File[] files = this.listFiles(file);
-    		if(files == null) { return true; }
-    		// if folder is not empty
-    		if(files.length > 0) { return false; }
-    	}
-		//
-    	try {    		
-    		Logger.defaultLogger().info("delete - " + this.getBucket().getName() + "/" + file.getAS3Key());
-			this.getS3Service().deleteObject(this.getBucket(), file.getAS3Key());
-			AS3File rFile = this._cachedFiles.remove(file.getAS3Key());
+    	try {
+			this.getS3Service().deleteObject(this.getBucket(), this.getAS3Key(file));
+			this.mount();
 			return true;
 		} catch (Exception ex) {
 			Logger.defaultLogger().error(ex);
@@ -292,7 +276,7 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
     }
 
     public OutputStream getFileOutputStream(File file, boolean append) throws IOException {
-    	Logger.defaultLogger().info("getFileOutputStream - " + file.getAbsolutePath() + " - " + append + " " + file.length());
+    	Logger.defaultLogger().info("getFileOutputStream - " + file.getAbsolutePath() + " - " + append);
     	return new AS3OutputStream(this.getS3Service(), this.getBucket(), this.getAS3Key(file));
     }
     
@@ -311,7 +295,7 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
     }
     
     public void mount() throws IOException {    	
-    	//Logger.defaultLogger().info("mount data");
+    	Logger.defaultLogger().info("mount data");
     	//
     	this._cachedFiles.clear();
     	// check prefix
@@ -324,10 +308,7 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
 //		}
     	//
 		try {
-			S3Bucket bucket = this.getBucket();
-			if(bucket == null) { return; }
-			//
-			S3Object[] s3Objs = this.getS3Service().listObjects(bucket, this._prefix, null);
+			S3Object[] s3Objs = this.getS3Service().listObjects(this.getBucket(), this._prefix, null);
 			for(S3Object obj : s3Objs) {				
 				boolean isDirectory = obj.getKey().lastIndexOf("/") == (obj.getKey().length() - 1);
 				AS3File file = new AS3File(
@@ -381,14 +362,15 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
                 false
         );
     }
-	    
-    /* */
+	
     
     private String getAS3Key(File file) {
     	return this.getAS3Key(file, file.isDirectory());    	
     }
-        
-    private String getAS3Key(File file, boolean isDirectory) {	
+    
+    
+    private String getAS3Key(File file, boolean isDirectory) {
+    	//Logger.defaultLogger().info("getAS3Key - input - " + file.getAbsolutePath());    	
     	String path = file.getAbsolutePath();
     	path = path.replace("\\", "/");
     	if(path.indexOf(this._directory) == -1) { return null; }
@@ -400,9 +382,12 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
     	//
     	if(isDirectory) { path = path + "/"; }
     	//
+    	//Logger.defaultLogger().info("getAS3Key - output - " + path);
+    	//
     	return path;
     }
-        
+    
+    
     private AS3File getAS3File(File file) {
     	if(file instanceof AS3File) {
     		return (AS3File)file; 
@@ -413,16 +398,8 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
     		return this._cachedFiles.get(as3Key);
     	}
     	//
-    	boolean isDirectory = file.isDirectory();
-    	//
     	S3Object obj = this.getS3Object(as3Key);
-    	if(obj == null) {
-    		obj = this.getS3Object(as3Key + "/");
-    		if(obj != null) {
-    			as3Key += "/";
-    			isDirectory = true;
-    		}
-    	}
+    	if(obj == null) { obj = this.getS3Object(as3Key + "/"); }
     	//
     	long length = 0;
     	long ticks = 0;
@@ -431,9 +408,12 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
     		ticks = obj.getLastModifiedDate().getTime();
     	}	
     	//
-    	return new AS3File(file.getAbsolutePath(), as3Key, length, isDirectory, obj != null || as3Key.equals("/"), ticks);
+    	//Logger.defaultLogger().info("getAS3File - " + file.getAbsolutePath());
+    	//
+    	return new AS3File(file.getAbsolutePath(), as3Key, length, file.isDirectory(), obj != null || as3Key.equals("/"), ticks);
     }
-        
+    
+    
     private S3Object getS3Object(String key) {
     	S3Bucket bucket = this.getBucket();
     	if(bucket == null) { return null; }
@@ -447,6 +427,5 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
 		//
 		return s3obj;
     }
-
     
 }

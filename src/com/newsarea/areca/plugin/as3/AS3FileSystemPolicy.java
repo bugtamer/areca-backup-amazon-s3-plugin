@@ -5,7 +5,6 @@ import java.io.File;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
-import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.security.AWSCredentials;
 
 import com.application.areca.ApplicationException;
@@ -58,11 +57,7 @@ public class AS3FileSystemPolicy extends AbstractFileSystemPolicy implements Fil
 		return LOCAL_DIR_PREFIX + "/" + this._prefix + "/" + this.getUid() + "/";
 	}
 
-	public String getDisplayableParameters() {		
-		if(this._key == null || this._secret == null || this._bucket == null) {
-			return "";		
-		}
-		//
+	public String getDisplayableParameters() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(this._key);
 		sb.append("@");
@@ -121,26 +116,17 @@ public class AS3FileSystemPolicy extends AbstractFileSystemPolicy implements Fil
 	public void synchronizeConfiguration() { }
 
 	public void validate(boolean extendedTests) throws ApplicationException {
-		try {			
+		try {
 			S3Service s3Service = new RestS3Service(this.getCredentials());
-			S3Bucket bucket = s3Service.getBucket(this._bucket);
-			if(bucket == null) {
-				throw new ApplicationException("invalid bucket name");
-			}
-		} catch (S3ServiceException s3ex) {
-			throw new ApplicationException(s3ex.getMessage());
-		} catch (Exception ex) {
-			throw new ApplicationException(ex.getMessage());
-		}		
+			s3Service.listAllBuckets();
+		} catch (S3ServiceException e) {
+			e.printStackTrace();
+			throw new ApplicationException();
+		}	
 	}
 	
 	public void copyAttributes(AS3FileSystemPolicy policy) {
 		super.copyAttributes(policy);
-		//
-		policy.setKey(this.getKey());
-		policy.setSecret(this.getSecret());		
-		policy.setBucket(this.getBucket());
-		policy.setPrefix(this.getPrefix());
 		//
 		policy.setMedium(this.getMedium());
     }
@@ -149,14 +135,6 @@ public class AS3FileSystemPolicy extends AbstractFileSystemPolicy implements Fil
 		AS3FileSystemPolicy policy = new AS3FileSystemPolicy();
 		copyAttributes(policy);
 		return policy;
-	}
-
-	public int getMaxRetries() {
-		return 3;
-	}
-
-	public boolean retrySupported() {
-		return true;
 	}
 
 }
