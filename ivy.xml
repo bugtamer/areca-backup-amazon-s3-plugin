@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd"
+>
+
+
+    <info organisation="bugtamer" module="areca-plugin-as3"/>
+
+
+    <dependencies>
+
+        <dependency org="org.apache.mahout.jets3t" name="jets3t" rev="0.6.1" />
+
+    </dependencies>
+
+
+</ivy-module>

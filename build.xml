@@ -1,0 +1,107 @@
+<!--
+    Amazon S3 plugin's ant compilation script
+
+    Syntax :
+    ant [-Dareca.dir=<Areca installation directory>] [fetch-areca.jar] [deploy-to-areca] [-Ddebug=on]
+-->
+
+<project name="Plugin compilation" default="compile" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <description>Plugin's compilation script</description>
+
+    <property name="root" value="." />
+
+    <property name="debug" value="off" />
+
+    <property name="plugin.release.dir" value="${root}/releases" />
+    <property name="plugin.name" value="areca-plugin-as3" />
+    <property name="plugin.version" value="3.0.0" />
+
+    <property name="bundle.dir" value="${plugin.release.dir}/${plugin.name}" />
+    <property name="bundle.file" value="${plugin.release.dir}/${plugin.name}-${plugin.version}.zip" />
+    
+
+    <import file="${root}/dependency-manager.xml" />
+
+
+    <target name="fetch-areca.jar" depends="areca.dir.guard">
+        <echo>Copy "${areca.dir}/libs/areca.jar" to "${root}/libs/areca.jar"</echo>
+        <copy file="${areca.dir}/libs/areca.jar" tofile="${root}/libs/areca.jar" preservelastmodified="true" overwrite="true" />
+        <antcall target="compile" />
+    </target>
+
+
+    <target name="compile" depends="get-dependencies">
+        <delete dir="${root}/classes" />
+        <mkdir dir="${root}/classes" />
+
+        <javac srcdir="${root}/src"
+               destdir="${root}/classes"
+               debug="${debug}"
+               source="8"
+               target="8"
+               encoding="ISO-8859-1"
+               includeantruntime="false"
+        >
+            <classpath>
+                <fileset dir="${root}/libs">
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
+        </javac>
+
+        <delete dir="${plugin.release.dir}" />
+        <mkdir dir="${plugin.release.dir}" />
+
+        <delete dir="${bundle.dir}" />
+        <mkdir dir="${bundle.dir}" />
+
+        <jar destfile="${bundle.dir}/${plugin.name}.jar">
+            <fileset dir="${root}/classes" />
+            <zipfileset src="${root}/libs/jets3t.jar" />
+        </jar>
+
+        <delete dir="${root}/classes" />
+
+        <antcall target="bundle" />
+    </target>
+
+
+    <target name="bundle">
+        <copy file="${root}/${plugin.name}.properties" tofile="${bundle.dir}/${plugin.name}.properties" preservelastmodified="true" overwrite="true" />
+
+        <zip destfile="${bundle.file}" level="9" zip64Mode="as-needed">
+            <zipfileset dir="${bundle.dir}" prefix="${plugin.name}">
+                <include name="${plugin.name}.properties" />
+                <include name="${plugin.name}.jar" />
+            </zipfileset>
+        </zip>
+
+        <checksum file="${bundle.file}" todir="${plugin.release.dir}" forceOverwrite="yes" algorithm="SHA-512" />
+        <checksum file="${bundle.file}" todir="${plugin.release.dir}" forceOverwrite="yes" algorithm="SHA-1" />
+        <checksum file="${bundle.file}" todir="${plugin.release.dir}" forceOverwrite="yes" algorithm="MD5" />
+        
+        <delete dir="${bundle.dir}" />
+        <delete dir="${root}/classes" />
+    </target>
+
+
+    <target name="deploy-to-areca" depends="areca.dir.guard">
+        <delete dir="${areca.dir}/plugins/${plugin.name}" />
+
+        <unzip src="${bundle.file}" dest="${areca.dir}/plugins" />
+    </target>
+
+
+    <target name="areca.dir.guard">
+        <fail message="The property 'areca.dir' is not set. Please set it to the Areca installation directory (e.g. -Dareca.dir=/path-to/areca-backup).">
+            <condition>
+                <not>
+                    <isset property="areca.dir" />
+                </not>
+            </condition>
+        </fail>
+        <echo message="'areca.dir' is set (${areca.dir})." />
+    </target>
+
+</project>

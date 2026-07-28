@@ -10,6 +10,7 @@ import org.jets3t.service.security.AWSCredentials;
 import com.application.areca.ApplicationException;
 import com.application.areca.ArchiveMedium;
 import com.application.areca.impl.policy.AbstractFileSystemPolicy;
+import com.application.areca.impl.policy.AccessInformations;
 import com.application.areca.impl.policy.FileSystemPolicy;
 import com.myJava.file.FileSystemManager;
 import com.myJava.file.driver.FileSystemDriver;
@@ -135,6 +136,36 @@ public class AS3FileSystemPolicy extends AbstractFileSystemPolicy implements Fil
 		AS3FileSystemPolicy policy = new AS3FileSystemPolicy();
 		copyAttributes(policy);
 		return policy;
+	}
+
+
+	@Override
+	public boolean canHandle(File file) {
+		throw new UnsupportedOperationException("Unimplemented method 'canHandle'");
+	}
+
+
+	@Override
+	public AccessInformations checkReachable() {
+		throw new UnsupportedOperationException("Unimplemented method 'checkReachable'");
+	}
+
+
+	@Override
+	public String getDisplayableParameters(boolean fullPath) {
+		throw new UnsupportedOperationException("Unimplemented method 'getDisplayableParameters'");
+	}
+
+
+	@Override
+	public int getMaxRetries() {
+		throw new UnsupportedOperationException("Unimplemented method 'getMaxRetries'");
+	}
+
+
+	@Override
+	public boolean retrySupported() {
+		throw new UnsupportedOperationException("Unimplemented method 'retrySupported'");
 	}
 
 }

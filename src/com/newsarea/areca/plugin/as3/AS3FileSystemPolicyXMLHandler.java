@@ -2,13 +2,13 @@ package com.newsarea.areca.plugin.as3;
 
 import org.w3c.dom.Node;
 
-import com.application.areca.AbstractRecoveryTarget;
+import com.application.areca.AbstractTarget;
 import com.application.areca.adapters.AbstractFileSystemPolicyXMLHandler;
-import com.application.areca.adapters.AdapterException;
-import com.application.areca.adapters.TargetXMLReader;
-import com.application.areca.adapters.TargetXMLWriter;
+import com.application.areca.adapters.read.TargetXMLReader;
+import com.application.areca.adapters.write.TargetXMLWriter;
 import com.application.areca.impl.policy.FileSystemPolicy;
 import com.myJava.util.Util;
+import com.myJava.util.xml.AdapterException;
 
 public class AS3FileSystemPolicyXMLHandler extends AbstractFileSystemPolicyXMLHandler {
 	
@@ -17,7 +17,7 @@ public class AS3FileSystemPolicyXMLHandler extends AbstractFileSystemPolicyXMLHa
 	private static final String XML_PREFIX_KEY = "prefix";
 	private static final String XML_BUCKET_KEY = "bucket";
 			
-	public FileSystemPolicy read(Node mediumNode, AbstractRecoveryTarget arg1, TargetXMLReader arg2) throws AdapterException {
+	public FileSystemPolicy read(Node mediumNode, AbstractTarget arg1, TargetXMLReader arg2) throws AdapterException {
 		Node nameNode = mediumNode.getAttributes().getNamedItem(XML_MEDIUM_ARCHIVENAME);
 		Node keyNode = mediumNode.getAttributes().getNamedItem(XML_AS3KEY_KEY);
 		Node secretNode = mediumNode.getAttributes().getNamedItem(XML_AS3SECRET_KEY);
@@ -82,5 +82,11 @@ public class AS3FileSystemPolicyXMLHandler extends AbstractFileSystemPolicyXMLHa
         
         return "\"" + ret + "\"";
     }
+
+
+	@Override
+	public void write(FileSystemPolicy fsPolicy, boolean removeSensitiveData, StringBuffer mediumNode) {
+		throw new UnsupportedOperationException("Unimplemented method 'write'");
+	}
 	
 }

@@ -1,4 +1,6 @@
 Amazon S3 plugin to backup files with Areca to an amazon s3 bucket.
+
+Copyright (C) 2026  Bugtamer
 Copyright (C) 2009  Robert Bernhardt
 
 This program is free software; you can redistribute it and/or

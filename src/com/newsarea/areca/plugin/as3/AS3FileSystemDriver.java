@@ -20,8 +20,11 @@ import com.myJava.file.EventOutputStream;
 import com.myJava.file.OutputStreamListener;
 import com.myJava.file.driver.AbstractFileSystemDriver;
 import com.myJava.file.driver.FileCacheableInformations;
+import com.myJava.file.metadata.FileMetaData;
 import com.myJava.object.ToStringHelper;
 import com.myJava.util.log.Logger;
+import com.myJava.util.taskmonitor.TaskCancelledException;
+import com.myJava.util.taskmonitor.TaskMonitor;
 
 public class AS3FileSystemDriver extends AbstractFileSystemDriver {
 
@@ -427,5 +430,83 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
 		//
 		return s3obj;
     }
-    
+
+
+	@Override
+	public void applyMetaData(FileMetaData fMetaData, File file) throws IOException {
+		throw new UnsupportedOperationException("Unimplemented method 'applyMetaData'");
+	}
+
+
+	@Override
+	public void clearCachedData(File file) throws IOException {
+		throw new UnsupportedOperationException("Unimplemented method 'clearCachedData'");
+	}
+
+
+	@Override
+	public boolean createNamedPipe(File file) throws IOException {
+		throw new UnsupportedOperationException("Unimplemented method 'createNamedPipe'");
+	}
+
+
+	@Override
+	public boolean createSymbolicLink(File file, String realPath) throws IOException {
+		throw new UnsupportedOperationException("Unimplemented method 'createSymbolicLink'");
+	}
+
+
+	@Override
+	public void deleteOnExit(File file) {
+		throw new UnsupportedOperationException("Unimplemented method 'deleteOnExit'");
+	}
+
+
+	@Override
+	public void forceDelete(File file, TaskMonitor monitor) throws IOException, TaskCancelledException {
+		throw new UnsupportedOperationException("Unimplemented method 'forceDelete'");
+	}
+
+
+	@Override
+	public FileMetaData getMetaData(File file, boolean onlyBasicAttributes) throws IOException {
+		throw new UnsupportedOperationException("Unimplemented method 'getMetaData'");
+	}
+
+
+	@Override
+	public String getPhysicalPath(File file) {
+		throw new UnsupportedOperationException("Unimplemented method 'getPhysicalPath'");
+	}
+
+
+	@Override
+	public short getType(File file) throws IOException {
+		throw new UnsupportedOperationException("Unimplemented method 'getType'");
+	}
+
+
+	@Override
+	public boolean isHidden(File file) {
+		throw new UnsupportedOperationException("Unimplemented method 'isHidden'");
+	}
+
+
+	@Override
+	public boolean mkdirs(File file) {
+		throw new UnsupportedOperationException("Unimplemented method 'mkdirs'");
+	}
+
+
+	@Override
+	public boolean setLastModified(File file, long time) {
+		throw new UnsupportedOperationException("Unimplemented method 'setLastModified'");
+	}
+
+
+	@Override
+	public boolean setReadOnly(File file) {
+		throw new UnsupportedOperationException("Unimplemented method 'setReadOnly'");
+	}
+
 }
