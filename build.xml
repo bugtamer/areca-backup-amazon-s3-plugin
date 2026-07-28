@@ -58,6 +58,8 @@
 
         <jar destfile="${bundle.dir}/${plugin.name}.jar">
             <fileset dir="${root}/classes" />
+            <zipfileset src="${root}/libs/commons-httpclient.jar" />
+            <zipfileset src="${root}/libs/commons-logging.jar" />
             <zipfileset src="${root}/libs/jets3t.jar" />
         </jar>
 

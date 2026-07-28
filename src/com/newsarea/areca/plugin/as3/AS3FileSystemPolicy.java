@@ -153,7 +153,7 @@ public class AS3FileSystemPolicy extends AbstractFileSystemPolicy implements Fil
 
 	@Override
 	public String getDisplayableParameters(boolean fullPath) {
-		throw new UnsupportedOperationException("Unimplemented method 'getDisplayableParameters'");
+		return getDisplayableParameters();
 	}
 
 
