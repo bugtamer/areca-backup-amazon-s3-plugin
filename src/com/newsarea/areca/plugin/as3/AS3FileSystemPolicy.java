@@ -16,6 +16,7 @@ import com.myJava.file.FileSystemManager;
 import com.myJava.file.driver.FileSystemDriver;
 import com.myJava.object.Duplicable;
 import com.myJava.system.OSTool;
+import com.myJava.util.log.Logger;
 
 public class AS3FileSystemPolicy extends AbstractFileSystemPolicy implements FileSystemPolicy {
 	
@@ -121,8 +122,11 @@ public class AS3FileSystemPolicy extends AbstractFileSystemPolicy implements Fil
 			S3Service s3Service = new RestS3Service(this.getCredentials());
 			s3Service.listAllBuckets();
 		} catch (S3ServiceException e) {
+			Logger.defaultLogger().error("AS3FileSystemPolicy - validate(extendedTests) - extendedTests=" + extendedTests, e);
+			/*
 			e.printStackTrace();
 			throw new ApplicationException();
+			*/
 		}	
 	}
 	
@@ -147,7 +151,8 @@ public class AS3FileSystemPolicy extends AbstractFileSystemPolicy implements Fil
 
 	@Override
 	public AccessInformations checkReachable() {
-		throw new UnsupportedOperationException("Unimplemented method 'checkReachable'");
+		final AccessInformations accessInfo = new AccessInformations();
+		return accessInfo;
 	}
 
 

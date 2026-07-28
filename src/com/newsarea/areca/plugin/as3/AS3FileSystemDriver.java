@@ -325,7 +325,7 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
 				this._cachedFiles.put(obj.getKey(), file);
 			}
 		} catch (S3ServiceException ex) {
-			Logger.defaultLogger().error(ex);
+			Logger.defaultLogger().error("AS3FileSystemDriver - mount()", ex);
 		}
     }
 

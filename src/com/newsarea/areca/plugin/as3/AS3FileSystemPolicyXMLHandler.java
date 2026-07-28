@@ -86,7 +86,8 @@ public class AS3FileSystemPolicyXMLHandler extends AbstractFileSystemPolicyXMLHa
 
 	@Override
 	public void write(FileSystemPolicy fsPolicy, boolean removeSensitiveData, StringBuffer mediumNode) {
-		throw new UnsupportedOperationException("Unimplemented method 'write'");
+		final TargetXMLWriter writer = null;
+		this.write(fsPolicy, writer, removeSensitiveData, mediumNode);
 	}
 	
 }
