@@ -476,7 +476,9 @@ public class AS3FileSystemDriver extends AbstractFileSystemDriver {
 
 	@Override
 	public String getPhysicalPath(File file) {
-		throw new UnsupportedOperationException("Unimplemented method 'getPhysicalPath'");
+		Logger.defaultLogger().fine("AS3FileSystemDriver - getPhysicalPath(file) - file=" + file);
+		Logger.defaultLogger().warn("AS3FileSystemDriver - getPhysicalPath(file) - Replace its 'fake' implementation");
+		return file.getAbsolutePath(); // FIXME
 	}
 
 
