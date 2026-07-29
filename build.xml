@@ -2,7 +2,7 @@
     Amazon S3 plugin's ant compilation script
 
     Syntax :
-    ant [-Dareca.dir=<Areca installation directory>] [fetch-areca.jar] [deploy-to-areca] [-Ddebug=on]
+    ant <windows-x86-64|linux-x86-64> [-Dareca.dir=<Areca installation directory>] [-Ddebug=on]
 -->
 
 <project name="Plugin compilation" default="compile" xmlns:ivy="antlib:org.apache.ivy.ant">
@@ -19,19 +19,36 @@
 
     <property name="bundle.dir" value="${plugin.release.dir}/${plugin.name}" />
     <property name="bundle.file" value="${plugin.release.dir}/${plugin.name}-${plugin.version}.zip" />
-    
+
 
     <import file="${root}/dependency-manager.xml" />
 
 
-    <target name="fetch-areca.jar" depends="areca.dir.guard">
-        <echo>Copy "${areca.dir}/libs/areca.jar" to "${root}/libs/areca.jar"</echo>
-        <copy file="${areca.dir}/libs/areca.jar" tofile="${root}/libs/areca.jar" preservelastmodified="true" overwrite="true" />
+    <target name="windows-x86-64">
+        <property name="swt.platform" value="platform-windows-x86-64"/>
+        <antcall target="get-dependencies" />
+        <antcall target="fetch-areca.jar" />
         <antcall target="compile" />
     </target>
 
 
-    <target name="compile" depends="get-dependencies">
+    <target name="linux-x86-64">
+        <property name="swt.platform" value="platform-linux-x86-64"/>
+        <antcall target="get-dependencies" />
+        <antcall target="fetch-areca.jar" />
+        <antcall target="compile" />
+    </target>
+
+
+    <target name="fetch-areca.jar" if="areca.dir">
+        <echo>Copy "${areca.dir}/libs/areca.jar" to "${root}/libs/areca.jar"</echo>
+        <copy file="${areca.dir}/libs/areca.jar" tofile="${root}/libs/areca.jar" preservelastmodified="true" overwrite="true" />
+    </target>
+
+
+    <target name="compile" if="swt.platform">
+        <antcall target="swt.guard" />
+
         <delete dir="${root}/classes" />
         <mkdir dir="${root}/classes" />
 
@@ -69,7 +86,7 @@
     </target>
 
 
-    <target name="bundle">
+    <target name="bundle" if="swt.platform">
         <copy file="${root}/${plugin.name}.properties" tofile="${bundle.dir}/${plugin.name}.properties" preservelastmodified="true" overwrite="true" />
 
         <zip destfile="${bundle.file}" level="9" zip64Mode="as-needed">
@@ -85,25 +102,27 @@
         
         <delete dir="${bundle.dir}" />
         <delete dir="${root}/classes" />
+
+        <antcall target="deploy-to-areca" />
     </target>
 
 
-    <target name="deploy-to-areca" depends="areca.dir.guard">
+    <target name="deploy-to-areca"  if="areca.dir">
         <delete dir="${areca.dir}/plugins/${plugin.name}" />
 
         <unzip src="${bundle.file}" dest="${areca.dir}/plugins" />
     </target>
 
 
-    <target name="areca.dir.guard">
-        <fail message="The property 'areca.dir' is not set. Please set it to the Areca installation directory (e.g. -Dareca.dir=/path-to/areca-backup).">
+    <target name="swt.guard">
+        <fail message="The property 'swt.platform' is not set. (e.g. ant linux-x86-64 | ant windows-x86-64 ).">
             <condition>
                 <not>
-                    <isset property="areca.dir" />
+                    <isset property="swt.platform" />
                 </not>
             </condition>
         </fail>
-        <echo message="'areca.dir' is set (${areca.dir})." />
+        <echo message="'swt.platform' is set (${swt.platform})." />
     </target>
 
 </project>

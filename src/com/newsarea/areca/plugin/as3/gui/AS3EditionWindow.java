@@ -185,7 +185,7 @@ public class AS3EditionWindow extends com.application.areca.launcher.gui.common.
 	
 	private boolean checkText(Text fld) {
 		 if (fld.getText() == null || fld.getText().trim().length() == 0) {
-			 this.setInError(fld);
+            // this.setInError(fld); // FIXME missing Control ctrl argument
 	         return false;
 		 }
 	     return true;

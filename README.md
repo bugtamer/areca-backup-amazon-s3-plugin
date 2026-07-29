@@ -30,20 +30,17 @@ Amazon S3 plugin to backup files with Areca Backup to an Amazon S3 bucket.
 
 ## Build a release
 
-`ant [-Dareca.dir=<Areca installation directory>] [fetch-areca.jar] [deploy-to-areca] [-Ddebug=on]`
-
-- `-Dareca.dir=/path-to/areca-backup` sets `areca.dir` to `/path-to/areca-backup` that points to Areca folder.
-- `fetch-areca.jar` copies `${areca.dir}/libs/areca.jar` to `areca-backup-amazon-s3-plugin/libs/areca.jar`.
-- `deploy-to-areca` uncompress `areca-backup-amazon-s3-plugin/releases/areca-plugin-as3-x.y.z.zip` into `${areca.dir}/plugins`.
-- `-Ddebug=on` allows you to enable debug mode.
-
 Examples:
 
-- `ant` or `ant compile` to compile and bundle the plugin.
-- `ant fetch-areca.jar deploy-to-areca -Dareca.dir=/path-to/areca-backup`
-- `ant -Dareca.dir=/path-to/areca-backup fetch-areca.jar`
-- `ant -Dareca.dir=/path-to/areca-backup deploy-to-areca`
-- `ant -Ddebug=on`
+- `ant windows-x86-64`
+  <br>
+  to compile and bundle the plugin but do not fetch `areca.jar`.
+- `ant linux-x86-64 -Dareca.dir=/path-to/areca-backup`
+  <br>
+  to compile, bundle, fetch `areca.jar` (from `/path-to/areca-backup/libs/areca.jar`) and, deploy the plugin to directory `/path-to/areca-backup/plugins`.
+- `ant linux-x86-64 -Dareca.dir=/path-to/areca-backup -Ddebug=on`
+  <br>
+  `-Ddebug=on` allows you to enable debug mode.
 
 
 ## License

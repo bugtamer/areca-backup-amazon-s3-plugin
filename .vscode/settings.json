@@ -1,6 +1,8 @@
 {
     "java.project.referencedLibraries": [
         "libs/areca.jar",
-        "libs/jets3t.jar"
+        "libs/jets3t.jar",
+        "libs/org.eclipse.jface.jar",
+        "libs/swt.jar"
     ]
 }

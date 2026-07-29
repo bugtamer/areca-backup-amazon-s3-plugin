@@ -10,8 +10,11 @@
 
 
     <target name="get-dependencies" depends="install-ivy">
+        <antcall target="swt.guard" />
         <ivy:settings file="ivysettings.xml"/>
-        <ivy:retrieve type="jar" overwriteMode="always" transitive="false" pattern="${root}/libs/[artifact].[ext]" />
+        <ivy:retrieve type="jar" overwriteMode="always" transitive="false" pattern="${root}/libs/[artifact].[ext]" conf="plugin-specific" />
+        <ivy:retrieve type="jar" overwriteMode="always" transitive="false" pattern="${root}/libs/[artifact].[ext]" conf="platform-agnostic" />
+        <ivy:retrieve type="jar" overwriteMode="always" transitive="false" pattern="${root}/libs/swt.[ext]"        conf="${swt.platform}" />
     </target>
 
 
