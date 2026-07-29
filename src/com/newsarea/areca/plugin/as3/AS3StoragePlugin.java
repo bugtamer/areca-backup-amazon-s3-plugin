@@ -4,7 +4,7 @@ import com.application.areca.plugins.AbstractStoragePlugin;
 import com.application.areca.plugins.FileSystemPolicyXMLHandler;
 import com.application.areca.plugins.StoragePlugin;
 import com.application.areca.plugins.StorageSelectionHelper;
-import com.application.areca.version.VersionInfos;
+import com.myJava.util.log.Logger;
 import com.myJava.util.version.VersionData;
 import com.newsarea.areca.plugin.as3.gui.AS3StorageSelectionHelper;
 
@@ -43,8 +43,19 @@ public class AS3StoragePlugin extends AbstractStoragePlugin implements StoragePl
 		return new AS3StorageSelectionHelper();
 	}
 
+
+	/**
+	 * Get the current version of the Amazon S3 Plugin.
+	 * @return Current version of the Amazon S3 Plugin.
+	 * @see com.myJava.util.version.VersionData VersionData class
+	 * @see com.application.areca.plugins.Plugin <b>Plugin</b> interface
+	 * @see version.xml
+	 */
+	@Override
 	public VersionData getVersionData() {
-		return VersionInfos.getLastVersion();
+		Logger.defaultLogger().fine("AS3StoragePlugin - getVersionData()");
+		final VersionData version = new AS3VersionData();
+		return version;
 	}
 
 }
